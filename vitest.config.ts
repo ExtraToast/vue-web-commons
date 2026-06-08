@@ -13,6 +13,15 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     include: ['src/**/*.test.ts'],
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.{ts,vue}'],
+      exclude: ['src/**/*.d.ts', 'src/**/__tests__/**'],
+      reporter: ['text'],
+      thresholds: {
+        lines: 80,
+      },
+    },
     restoreMocks: true,
   },
 })
