@@ -11,6 +11,18 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./api-runtime": {
+      "types": "./dist/api-runtime/index.d.ts",
+      "import": "./dist/api-runtime/index.js"
+    },
+    "./config": {
+      "types": "./dist/config/index.d.ts",
+      "import": "./dist/config/index.js"
+    },
+    "./nginx": {
+      "types": "./dist/nginx/index.d.ts",
+      "import": "./dist/nginx/index.js"
+    },
     "./style.css": {
       "types": "./dist/style.css.d.ts",
       "default": "./dist/style.css"
@@ -47,9 +59,31 @@
   "peerDependencies": {
     "@grafana/faro-web-sdk": "^2.7.1",
     "@grafana/faro-web-tracing": "^2.7.1",
+    "@playwright/test": "^1.0.0",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "dependency-cruiser": "^17.0.0",
     "pinia": "^3.0.4",
+    "vite": "^8.0.0",
+    "vitest": "^4.0.0",
     "vue": "^3.5.35",
     "vue-router": "^5.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@playwright/test": {
+      "optional": true
+    },
+    "@vitejs/plugin-vue": {
+      "optional": true
+    },
+    "dependency-cruiser": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    },
+    "vitest": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@antfu/eslint-config": "^9.0.0",

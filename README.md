@@ -18,6 +18,9 @@ Import package APIs from public coordinates:
 
 ```ts
 import { BaseButton, useApi, useTheme } from '@extratoast/vue-web-commons'
+import { createApiFetch } from '@extratoast/vue-web-commons/api-runtime'
+import { createVueViteConfig } from '@extratoast/vue-web-commons/config'
+import { createUnprivilegedSpaNginxConfig } from '@extratoast/vue-web-commons/nginx'
 import '@extratoast/vue-web-commons/style.css'
 import '@extratoast/vue-web-commons/theme.css'
 ```
@@ -50,6 +53,69 @@ Intentionally excluded from the first release:
 - Personal Stack feature components.
 - Generated API clients.
 - Consumer repository migrations.
+
+## Round 3 Infrastructure Helpers
+
+Config helpers live under `@extratoast/vue-web-commons/config` so browser runtime imports stay focused on app code:
+
+```ts
+import { createVueViteConfig } from '@extratoast/vue-web-commons/config'
+import { defineConfig } from 'vite'
+
+export default defineConfig(createVueViteConfig({
+  server: {
+    port: 5173,
+    proxy: {
+      '/api': { target: 'http://localhost:8080', changeOrigin: true },
+    },
+  },
+  build: {
+    hashedAssetNames: true,
+  },
+}))
+```
+
+The same subpath exports `createVueVitestConfig`, `createVuePlaywrightConfig`, `createVueTsConfig`, and `createFeatureSlicedDependencyCruiserConfig`. Generated-client paths are configurable:
+
+```js
+// .dependency-cruiser.mjs
+import { createFeatureSlicedDependencyCruiserConfig } from '@extratoast/vue-web-commons/config'
+
+export default createFeatureSlicedDependencyCruiserConfig({
+  generatedClientPaths: ['src/shared/services/api/generated', 'src/services/api/generated'],
+})
+```
+
+Generated API runtime helpers live under `@extratoast/vue-web-commons/api-runtime`:
+
+```ts
+import { createApiFetch } from '@extratoast/vue-web-commons/api-runtime'
+
+const apiFetch = createApiFetch({
+  baseUrl: '/api',
+  credentials: 'include',
+  bearerToken: () => sessionStorage.getItem('access_token'),
+  csrf: {
+    bootstrapPath: '/csrf',
+    headerName: 'X-XSRF-TOKEN',
+  },
+})
+```
+
+The runtime helpers are generator-agnostic and include base URL resolution, credentials, bearer auth, CSRF bootstrap for unsafe methods, ProblemDetail validation normalization, and `createHeyApiRuntimeConfig` for `@hey-api/openapi-ts` style clients.
+
+SPA nginx templates live under `@extratoast/vue-web-commons/nginx`:
+
+```ts
+import { createUnprivilegedSpaNginxConfig } from '@extratoast/vue-web-commons/nginx'
+
+const nginxConf = createUnprivilegedSpaNginxConfig({
+  listenPort: 8080,
+  healthz: true,
+})
+```
+
+The template renders immutable caching for Vite hashed assets, no-store `index.html`, fallback routing, gzip, optional `/healthz`, and privileged/unprivileged port variants. Domains, hostnames, image names, namespaces, and service paths are intentionally caller-provided.
 
 ## Downstream Personal Stack Adoption
 
