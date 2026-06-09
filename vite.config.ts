@@ -4,11 +4,17 @@ import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
 
 const external = [
+  '@playwright/test',
+  '@vitejs/plugin-vue',
   'vue',
   'vue-router',
   'pinia',
   '@grafana/faro-web-sdk',
   '@grafana/faro-web-tracing',
+  'dependency-cruiser',
+  'vite',
+  'vitest',
+  'vitest/config',
 ]
 
 export default defineConfig({
@@ -21,9 +27,14 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: {
+        'index': resolve(__dirname, 'src/index.ts'),
+        'api-runtime/index': resolve(__dirname, 'src/api-runtime/index.ts'),
+        'config/index': resolve(__dirname, 'src/config/index.ts'),
+        'nginx/index': resolve(__dirname, 'src/nginx/index.ts'),
+      },
       formats: ['es'],
-      fileName: () => 'index.js',
+      fileName: (_format, entryName) => `${entryName}.js`,
       cssFileName: 'style',
     },
     rollupOptions: {

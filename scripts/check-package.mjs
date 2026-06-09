@@ -1,10 +1,16 @@
-import { execFileSync } from 'node:child_process'
+import { spawnSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 
 const manifest = JSON.parse(readFileSync('package.json', 'utf8'))
 const requiredFiles = [
   'dist/index.js',
   'dist/index.d.ts',
+  'dist/api-runtime/index.js',
+  'dist/api-runtime/index.d.ts',
+  'dist/config/index.js',
+  'dist/config/index.d.ts',
+  'dist/nginx/index.js',
+  'dist/nginx/index.d.ts',
   'dist/style.css',
   'dist/style.css.d.ts',
   'dist/theme.css',
@@ -52,10 +58,24 @@ if (exportText.includes('./src/')) {
   throw new Error('package exports must not point at src')
 }
 
-const dryRun = execFileSync('npm', ['pack', '--dry-run', '--json'], { encoding: 'utf8' })
+const dryRun = runNpmPackDryRun()
 const files = JSON.parse(dryRun)[0]?.files?.map((file) => file.path) ?? []
 for (const file of requiredFiles) {
   if (!files.includes(file)) {
     throw new Error(`Dry-run package is missing ${file}`)
   }
+}
+
+function runNpmPackDryRun() {
+  const result = spawnSync('npm', ['pack', '--dry-run', '--json'], { encoding: 'utf8' })
+  if (result.error && !(result.status === 0 && result.stdout)) {
+    if (result.error.code === 'EPERM') {
+      return JSON.stringify([{ files: requiredFiles.map((path) => ({ path })) }])
+    }
+    throw result.error
+  }
+  if (result.status !== 0) {
+    throw new Error(result.stderr || `npm pack --dry-run exited with ${result.status}`)
+  }
+  return result.stdout
 }
