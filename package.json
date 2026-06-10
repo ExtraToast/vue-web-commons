@@ -98,5 +98,10 @@
     "vite-plugin-dts": "^5.0.2",
     "vitest": "^4.1.8",
     "vue-tsc": "^3.3.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ExtraToast/vue-web-commons.git"
+  },
+  "homepage": "https://github.com/ExtraToast/vue-web-commons#readme"
 }
