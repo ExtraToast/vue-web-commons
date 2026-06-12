@@ -3,6 +3,8 @@
  * so the type can be re-exported from the package barrel without
  * Vue SFC quirks.
  */
+export type AppShellLayout = 'topbar' | 'rail'
+
 export interface AppShellNavItem {
   /** Visible label. */
   label: string
@@ -15,4 +17,8 @@ export interface AppShellNavItem {
   testid?: string
   /** Optional active predicate; falls back to a path-prefix match. */
   active?: (currentPath: string) => boolean
+  /** Icon registry key used by rail-style layouts. */
+  icon?: string
+  /** Optional one-level nested navigation items. */
+  children?: AppShellNavItem[]
 }
