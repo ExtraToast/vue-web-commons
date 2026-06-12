@@ -49,6 +49,6 @@ must be reviewed deliberately, with downstream templates and instructions
 updated in the same change.
 
 **Version**: 1.0.0
-**Ratified**: {{DATE}}
-**Last Amended**: {{DATE}}
+**Ratified**: 2026-06-12
+**Last Amended**: 2026-06-12
 

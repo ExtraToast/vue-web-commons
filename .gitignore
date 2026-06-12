@@ -3,3 +3,7 @@ dist/
 coverage/
 *.tsbuildinfo
 
+
+# council orchestrator run scratch
+.council/
+tasks-*.json

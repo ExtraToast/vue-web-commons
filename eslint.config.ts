@@ -5,7 +5,7 @@ export default antfu(
     vue: true,
     typescript: true,
     formatters: false,
-    ignores: ['dist', 'node_modules', 'coverage'],
+    ignores: ['dist', 'node_modules', 'coverage', '.council'],
   },
   {
     rules: {

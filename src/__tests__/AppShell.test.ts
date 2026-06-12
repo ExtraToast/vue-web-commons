@@ -9,13 +9,28 @@ const navItems: AppShellNavItem[] = [
   { label: 'Beta', to: '/beta', testid: 'nav-beta' },
 ]
 
+const railNavItems: AppShellNavItem[] = [
+  {
+    label: 'Alpha',
+    to: '/alpha',
+    testid: 'nav-alpha',
+    icon: 'folder',
+    children: [
+      { label: 'Alpha Child', to: '/alpha/child', testid: 'nav-alpha-child', icon: 'terminal' },
+    ],
+  },
+  { label: 'Beta', to: '/beta', testid: 'nav-beta', icon: 'chat' },
+]
+
 function makeRouter() {
   return createRouter({
     history: createMemoryHistory(),
     routes: [
       { path: '/', component: { template: '<div />' } },
       { path: '/alpha', component: { template: '<div />' } },
+      { path: '/alpha/child', component: { template: '<div />' } },
       { path: '/beta', component: { template: '<div />' } },
+      { path: '/new', component: { template: '<div />' } },
       { path: '/account', component: { template: '<div />' } },
     ],
   })
@@ -202,6 +217,86 @@ describe('appShell', () => {
     expect(wrapper.find('[data-testid="extras-slot"]').exists()).toBe(true)
     await wrapper.find('[data-testid="nav-menu-trigger"]').trigger('click')
     expect(document.body.querySelectorAll('[data-testid="extras-slot"]').length).toBeGreaterThanOrEqual(1)
+    wrapper.unmount()
+  })
+})
+
+describe('rail layout', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    document.documentElement.removeAttribute('data-theme')
+    document.documentElement.classList.remove('dark')
+    document.body.style.overflow = ''
+  })
+
+  it('renders the rail aside with nav items and icons', () => {
+    const wrapper = mount(AppShell, {
+      props: { navItems: railNavItems, brandMain: 'demo', layout: 'rail', newActionTo: '/new' },
+      global: { plugins: [makeRouter()] },
+    })
+
+    expect(wrapper.find('[data-testid="app-rail"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="rail-toggle"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="rail-new-action"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="nav-alpha"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="nav-alpha"] svg').exists()).toBe(true)
+  })
+
+  it('toggles the collapsed rail state and persists it', async () => {
+    const wrapper = mount(AppShell, {
+      props: { navItems: railNavItems, brandMain: 'demo', layout: 'rail', railStorageKey: 'rail-test' },
+      global: { plugins: [makeRouter()] },
+    })
+
+    const toggle = wrapper.find('[data-testid="rail-toggle"]')
+    expect(toggle.attributes('aria-expanded')).toBe('true')
+
+    await toggle.trigger('click')
+
+    expect(toggle.attributes('aria-expanded')).toBe('false')
+    expect(localStorage.getItem('rail-test')).toBe('true')
+
+    await toggle.trigger('click')
+
+    expect(toggle.attributes('aria-expanded')).toBe('true')
+    expect(localStorage.getItem('rail-test')).toBe('false')
+  })
+
+  it('renders child nav items when a parent is expanded', async () => {
+    const wrapper = mount(AppShell, {
+      props: { navItems: railNavItems, brandMain: 'demo', layout: 'rail' },
+      global: { plugins: [makeRouter()] },
+    })
+
+    expect(wrapper.find('[data-testid="nav-alpha-child"]').exists()).toBe(false)
+
+    await wrapper.find('[data-testid="rail-disclosure-nav-alpha"]').trigger('click')
+
+    const child = wrapper.find('[data-testid="nav-alpha-child"]')
+    expect(child.exists()).toBe(true)
+    expect(child.text()).toContain('Alpha Child')
+  })
+
+  it('opens and closes the left mobile drawer', async () => {
+    const wrapper = mount(AppShell, {
+      props: { navItems: railNavItems, brandMain: 'demo', layout: 'rail' },
+      global: { plugins: [makeRouter()] },
+      attachTo: document.body,
+    })
+
+    expect(document.body.querySelector('[data-testid="nav-drawer"]')).toBeNull()
+
+    await wrapper.find('[data-testid="nav-menu-trigger"]').trigger('click')
+
+    expect(document.body.querySelector('[data-testid="nav-drawer"]')).not.toBeNull()
+    expect(document.body.style.overflow).toBe('hidden')
+
+    const backdrop = document.body.querySelector<HTMLElement>('[data-testid="nav-drawer-backdrop"]')!
+    backdrop.click()
+    await wrapper.vm.$nextTick()
+
+    expect(document.body.querySelector('[data-testid="nav-drawer"]')).toBeNull()
+    expect(document.body.style.overflow).toBe('')
     wrapper.unmount()
   })
 })
