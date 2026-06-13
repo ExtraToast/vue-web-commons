@@ -351,7 +351,19 @@ onBeforeUnmount(() => {
       class="fixed top-0 z-40 w-full border-b border-[var(--color-surface-border)]/50 bg-[var(--color-surface-dark)]/90 backdrop-blur-md lg:hidden"
       data-testid="app-nav"
     >
+      <!-- The drawer slides in from the left, so the trigger sits on the left to match. -->
       <div class="flex h-[var(--app-nav-height)] items-center justify-between px-4">
+        <button
+          type="button"
+          class="-ml-1.5 inline-flex h-11 w-11 items-center justify-center rounded-md text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-surface-elevated)] hover:text-[var(--color-terminal-green)]"
+          aria-label="Open menu"
+          :aria-expanded="drawerOpen"
+          data-testid="nav-menu-trigger"
+          @click="openDrawer"
+        >
+          <AppShellIcon name="menu" class="h-5 w-5" />
+        </button>
+
         <RouterLink
           :to="brandTo"
           class="font-mono text-sm font-bold tracking-tight text-[var(--color-terminal-green)]"
@@ -360,17 +372,6 @@ onBeforeUnmount(() => {
           <span class="text-[var(--color-text-muted)]">~/</span>{{ brandMain
           }}<span class="text-[var(--color-accent-light)]">{{ brandSuffix }}</span>
         </RouterLink>
-
-        <button
-          type="button"
-          class="inline-flex h-11 w-11 items-center justify-center rounded-md text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-surface-elevated)] hover:text-[var(--color-terminal-green)]"
-          aria-label="Open menu"
-          :aria-expanded="drawerOpen"
-          data-testid="nav-menu-trigger"
-          @click="openDrawer"
-        >
-          <AppShellIcon name="menu" class="h-5 w-5" />
-        </button>
       </div>
     </nav>
 
