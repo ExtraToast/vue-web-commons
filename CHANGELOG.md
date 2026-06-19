@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/ExtraToast/vue-web-commons/compare/v0.3.1...v0.4.0) (2026-06-19)
+
+
+### Features
+
+* **AppShell:** device safe-area for the native app shell ([#17](https://github.com/ExtraToast/vue-web-commons/issues/17)) ([b00eff4](https://github.com/ExtraToast/vue-web-commons/commit/b00eff40859e75560be403ab686646f51612b111))
+
 ## [0.3.1](https://github.com/ExtraToast/vue-web-commons/compare/v0.3.0...v0.3.1) (2026-06-13)
 
 
