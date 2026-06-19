@@ -99,3 +99,27 @@ body {
     0 0 20px color-mix(in srgb, var(--color-accent) 20%, transparent),
     0 0 60px color-mix(in srgb, var(--color-accent) 5%, transparent);
 }
+
+/*
+ * Native app (Capacitor) device safe areas for the shared AppShell. On phones
+ * the fixed top nav and the slide-in drawer otherwise render under the OS
+ * status bar, leaving the menu button under the clock and hard to tap. Push
+ * their content below the top inset and offset page content so nothing hides
+ * behind the taller nav. Applies to every app that consumes the shell.
+ */
+@supports (padding: env(safe-area-inset-top)) {
+  [data-testid='app-nav'] {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  [data-testid='nav-drawer'],
+  [data-testid='nav-drawer-root'] {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  @media (max-width: 1023px) {
+    main {
+      padding-top: calc(3.5rem + env(safe-area-inset-top));
+    }
+  }
+}
